@@ -16,7 +16,14 @@ const App = () => {
 
 
   return (
-    <Statistics good={good} neutral={neutral} bad={bad} handleClick={handleClick}/>
+    <>
+      <h1>give feedback</h1>
+      <button onClick={() => handleClick("good")}>good</button>
+      <button onClick={() => handleClick("neutral")}>neutral</button>
+      <button onClick={() => handleClick("bad")}>bad</button>
+      <Statistics good={good} neutral={neutral} bad={bad} handleClick={handleClick}/>
+    </>
+    
   )
 }
 
