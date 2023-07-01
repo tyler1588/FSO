@@ -1,12 +1,11 @@
 import { useState } from 'react'
+import personArray from './data/personArray'
+import Filter from './components/Filter'
+import Form from './components/Form'
+import Display from './components/Display'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ]) 
+  const [persons, setPersons] = useState(personArray) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterValue, setFilterValue] = useState('')
@@ -39,28 +38,19 @@ const App = () => {
     }
   }
 
-  const display = () => {
-    const toShow = filterValue === '' ? persons : persons.filter(person => person.name.toLowerCase().includes(filterValue.toLowerCase()))
-    return (toShow.map(person => <p key={person.id}>{person.name} {person.number}</p>))
-  }
-
   return (
     <div>
       <h2>Phonebook</h2>
-      filter: <input onChange={updateFilter} value={filterValue}/>
+      <Filter updateFilter={updateFilter} filterValue={filterValue}/>
       <h2>Add</h2>
-      <form>
-        <div>
-          name: <input onChange={updateName} value={newName}/>
-          <br></br>
-          number: <input onChange={updateNumber} value={newNumber}/>
-        </div>
-        <div>
-          <button onClick={(event) => addPerson(event)} type="submit">add</button>
-        </div>
-      </form>
+      <Form updateName={updateName} 
+            newName={newName} 
+            updateNumber={updateNumber} 
+            newNumber={newNumber}
+            addPerson={addPerson}
+      />
       <h2>Numbers</h2>
-      {display()}
+      <Display filterValue={filterValue} persons={persons}/>
     </div>
   )
 }
