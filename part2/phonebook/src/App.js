@@ -1,14 +1,22 @@
-import { useState } from 'react'
-import personArray from './data/personArray'
+import { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import Form from './components/Form'
 import Display from './components/Display'
+import axios from 'axios'
 
 const App = () => {
-  const [persons, setPersons] = useState(personArray) 
+  const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterValue, setFilterValue] = useState('')
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data)
+      })
+  }, [])
 
   const updateName = (event) => {
     setNewName(event.target.value)
