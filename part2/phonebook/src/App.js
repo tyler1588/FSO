@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import Form from './components/Form'
 import Display from './components/Display'
-import axios from 'axios'
+import personService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -11,23 +11,44 @@ const App = () => {
   const [filterValue, setFilterValue] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
+    personService
+      .getAll()
       .then(response => {
         setPersons(response.data)
       })
+      .catch(response => {
+        console.log(response)
+        alert("failed to get people")
+      })
   }, [])
 
-  const updateName = (event) => {
+  const updateName = event => {
     setNewName(event.target.value)
   }
 
-  const updateNumber = (event) => {
+  const updateNumber = event => {
     setNewNumber(event.target.value)
   }
 
-  const updateFilter = (event) => {
+  const updateFilter = event => {
     setFilterValue(event.target.value)
+  }
+
+  const deletePerson = event => {
+    const id = parseInt(event.target.id)
+    const name = event.target.name
+
+    if (window.confirm(`Delete ${name}?`)) {
+    personService
+      .deletePerson(id)
+      .then(response => {
+        setPersons(persons.filter(person => person.id !== id))
+      })
+      .catch(response => {
+        console.log(response)
+        alert("failed to delete")
+      })
+    }
   }
 
   const addPerson = (event) => {
@@ -39,7 +60,7 @@ const App = () => {
     if (persons.some(person => person.name === newName)){
       alert(`${newName} is already added to the phonebook`)
     } else {
-      axios.post('http://localhost:3001/persons', personObject)
+      personService.create(personObject)
       .then(response => {
         setPersons(persons.concat(response.data))
         setNewName('')
@@ -64,7 +85,7 @@ const App = () => {
             addPerson={addPerson}
       />
       <h2>Numbers</h2>
-      <Display filterValue={filterValue} persons={persons}/>
+      <Display filterValue={filterValue} persons={persons} deletePerson={deletePerson}/>
     </div>
   )
 }
