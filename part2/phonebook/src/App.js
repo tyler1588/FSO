@@ -3,12 +3,14 @@ import Filter from './components/Filter'
 import Form from './components/Form'
 import Display from './components/Display'
 import personService from './services/persons'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterValue, setFilterValue] = useState('')
+  const [notification, setNotification] = useState({message: null, color: null})
 
   useEffect(() => {
     personService
@@ -18,7 +20,10 @@ const App = () => {
       })
       .catch(response => {
         console.log(response)
-        alert("failed to get people")
+        setNotification({message: "failed to get people", color: "red"})
+        setTimeout(() => {
+          setNotification({message: null, color: null})
+        }, 5000)
       })
   }, [])
 
@@ -43,10 +48,16 @@ const App = () => {
       .deletePerson(id)
       .then(response => {
         setPersons(persons.filter(person => person.id !== id))
+        setNotification({message: `Deleted ${name}`, color: "green"})
+        setTimeout(() => {
+          setNotification({message: null, color: null})
+        }, 5000)
       })
       .catch(response => {
-        console.log(response)
-        alert("failed to delete")
+        setNotification({message: `Failed to delete ${name}`, color: "red"})
+        setTimeout(() => {
+          setNotification({message: null, color: null})
+        }, 5000)
       })
     }
   }
@@ -61,12 +72,19 @@ const App = () => {
           .updatePerson(personToUpdate.id, personObject)
           .then(response => {
             setPersons(persons.map(person => person.id !== personToUpdate.id ? person : response.data))
+            setNotification({message: `Updated ${newName}'s number`, color: "green"})
+            setTimeout(() => {
+              setNotification({message: null, color: null})
+            }, 5000)
             setNewName('')
             setNewNumber('')
           })
           .catch(response => {
-            alert("Error updating person")
-            console.log(response)
+            setNotification({message: `Information for ${newName} has already been removed from the server`, color: "red"})
+            setTimeout(() => {
+              setNotification({message: null, color: null})
+            }, 5000)
+            setPersons(persons.filter(person => person.id !== personToUpdate.id))
           })
       }
     } else {
@@ -77,12 +95,18 @@ const App = () => {
       personService.create(personObject)
       .then(response => {
         setPersons(persons.concat(response.data))
+        setNotification({message: `Added ${newName}`, color: "green"})
+        setTimeout(() => {
+          setNotification({message: null, color: null})
+        }, 5000)
         setNewName('')
         setNewNumber('')
       })
       .catch(response => {
-        alert("Error adding person")
-        console.log(response)
+        setNotification({message: `Failed to add person`, color: "red"})
+        setTimeout(() => {
+          setNotification({message: null, color: null})
+        }, 5000)
       })
     }
   }
@@ -90,6 +114,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification notification={notification}/>
       <Filter updateFilter={updateFilter} filterValue={filterValue}/>
       <h2>Add</h2>
       <Form updateName={updateName} 
