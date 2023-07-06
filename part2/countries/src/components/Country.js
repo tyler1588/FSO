@@ -1,6 +1,25 @@
-const Country = ({country, toggleMinimal}) => {
+import Weather from "./Weather"
+const Country = ({country, toggleMinimal, weather, onlyCountry}) => {
 
-    if(!country.minimal){
+    if (onlyCountry) {
+        return (
+            <div>
+                <div>
+                    <h1 style={{display: "inline-block"}}>{country.name.common}</h1>
+                </div>
+                <p>Capital: {country.capital}</p>
+                <p>Area: {country.area}</p>
+                <h3>Languages</h3>
+                <ul>
+                    {Object.keys(country.languages).map(language => <li key={language}>{country.languages[language]}</li>)}
+                </ul>
+                <img src={country.flags.png} alt={country.flags.alt} style={{width: 200}}></img>
+                <Weather weather={weather}></Weather>
+            </div>
+        )
+    }
+
+    if (!country.minimal){
         return (
             <div>{country.name.common} <button onClick={() => toggleMinimal(country.name.common)}>show</button></div>
         )
