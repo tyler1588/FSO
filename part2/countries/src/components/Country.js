@@ -1,7 +1,17 @@
-const Country = ({country}) => {
+const Country = ({country, toggleMinimal}) => {
+
+    if(!country.minimal){
+        return (
+            <div>{country.name.common} <button onClick={() => toggleMinimal(country.name.common)}>show</button></div>
+        )
+    }
+
     return (
-        <>
-            <h1>{country.name.common}</h1>
+        <div>
+            <div>
+                <h1 style={{display: "inline-block"}}>{country.name.common}</h1>
+                <button onClick={() => toggleMinimal(country.name.common)}>hide</button>
+            </div>
             <p>Capital: {country.capital}</p>
             <p>Area: {country.area}</p>
             <h3>Languages</h3>
@@ -9,7 +19,7 @@ const Country = ({country}) => {
                 {Object.keys(country.languages).map(language => <li key={language}>{country.languages[language]}</li>)}
             </ul>
             <img src={country.flags.png} alt={country.flags.alt} style={{width: 200}}></img>
-        </>
+        </div>
     )
 }
 
